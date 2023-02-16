@@ -1,35 +1,36 @@
 import { Injectable } from '@angular/core';
-import {createClient, SupabaseClient} from "@supabase/supabase-js";
-import {environment} from "../../enviroments/enviroment";
-import {Subject} from "rxjs";
-import {card} from "../shared/models/data.model";
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../enviroments/enviroment';
+import { Subject } from 'rxjs';
+import { card } from '../shared/models/data.model';
 
-export const BOARDS_TABLE = 'boards'
-export const USER_BOARDS_TABLE = 'user_boards'
-export const LISTS_TABLE = 'lists'
-export const CARDS_TABLE = 'cards'
-export const USERS_TABLE = 'users'
+export const BOARDS_TABLE = 'boards';
+export const USER_BOARDS_TABLE = 'user_boards';
+export const LISTS_TABLE = 'lists';
+export const CARDS_TABLE = 'cards';
+export const USERS_TABLE = 'users';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DataService {
-  private supabase: SupabaseClient
+  private supabase: SupabaseClient;
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
-    )
+    );
   }
 
   async startBoard() {
-    return this.supabase.from(BOARDS_TABLE).insert({})
+    return this.supabase.from(BOARDS_TABLE).insert({});
   }
 
   async getBoards() {
-    const boards = await this.supabase.from(USER_BOARDS_TABLE)
-      .select('boards:board_id(*)')
-    return boards.data || []
+    const boards = await this.supabase
+      .from(USER_BOARDS_TABLE)
+      .select('boards:board_id(*)');
+    return boards.data || [];
   }
 
   // CRUD Board
@@ -49,10 +50,7 @@ export class DataService {
   }
 
   async deleteBoard(boardId: number) {
-    return this.supabase
-      .from(BOARDS_TABLE)
-      .delete()
-      .match({ id: boardId });
+    return this.supabase.from(BOARDS_TABLE).delete().match({ id: boardId });
   }
 
   // CRUD Lists
@@ -69,45 +67,49 @@ export class DataService {
   async addBoardList(boardId: string, position = 0) {
     return this.supabase
       .from(LISTS_TABLE)
-      .insert({board_id: boardId, position, title: 'New List'})
+      .insert({ board_id: boardId, position, title: 'New List' })
       .select('*')
       .single();
   }
 
   async updateBoardList(list: any) {
-    return this.supabase
-      .from(LISTS_TABLE)
-      .update(list)
-      .match({ id: list.id });
+    return this.supabase.from(LISTS_TABLE).update(list).match({ id: list.id });
   }
 
   async deleteBoardList(list: any) {
-    return this.supabase
-      .from(LISTS_TABLE)
-      .delete()
-      .match({ id: list.id });
+    return this.supabase.from(LISTS_TABLE).delete().match({ id: list.id });
   }
 
   // CRUD Cards
   async addListCard(listId: string, boardId: string, position = 0) {
-    console.log('asdasd')
     return this.supabase
       .from(CARDS_TABLE)
-      .insert(
-        { board_id: boardId, list_id: listId, position, title: 'new Card' }
-      )
+      .insert({
+        board_id: boardId,
+        list_id: listId,
+        position,
+        title: 'new Card',
+      })
       .select('*')
       .single();
   }
 
-  async addListCardFast(listId: string, boardId: string, position = 0, email: string) {
-    console.log(email)
-    console.log('asdasd')
+  async addListCardFast(
+    listId: string,
+    boardId: string,
+    position = 0,
+    email: string
+  ) {
     return this.supabase
       .from(CARDS_TABLE)
-      .insert(
-        { board_id: boardId, list_id: listId, position, title: 'new Card', assigned_to: email }
-      )
+      .insert({
+        board_id: boardId,
+        list_id: listId,
+        position,
+        title: 'new Card',
+        assigned_to: email,
+        price: 1000,
+      })
       .select('*')
       .single();
   }
@@ -115,9 +117,7 @@ export class DataService {
   swapCard(card: card) {
     return this.supabase
       .from(CARDS_TABLE)
-      .insert(
-        {...card}
-      )
+      .insert({ ...card })
       .select('*')
       .single();
   }
@@ -133,17 +133,11 @@ export class DataService {
   }
 
   async updateCard(card: any) {
-    return this.supabase
-      .from(CARDS_TABLE)
-      .update(card)
-      .match({ id: card.id });
+    return this.supabase.from(CARDS_TABLE).update(card).match({ id: card.id });
   }
 
   async deleteCard(card: any) {
-    return this.supabase
-      .from(CARDS_TABLE)
-      .delete()
-      .match({ id: card.id });
+    return this.supabase.from(CARDS_TABLE).delete().match({ id: card.id });
   }
 
   // Invite others
@@ -180,7 +174,7 @@ export class DataService {
         },
         (payload: any) => changes.next(payload)
       )
-      .subscribe()
+      .subscribe();
 
     this.supabase
       .channel('table-db-changes2')
@@ -193,7 +187,7 @@ export class DataService {
         },
         (payload: any) => changes.next(payload)
       )
-      .subscribe()
+      .subscribe();
 
     this.supabase
       .channel('table-db-changes3')
@@ -206,11 +200,7 @@ export class DataService {
         },
         (payload: any) => changes.next(payload)
       )
-      .subscribe()
+      .subscribe();
     return changes.asObservable();
   }
-
-
-
-  }
-
+}

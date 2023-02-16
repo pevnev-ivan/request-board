@@ -1,33 +1,38 @@
-import {Component, OnChanges, OnInit, SimpleChanges} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {AuthService} from "../../services/auth.service";
-import {DataService} from "../../services/data.service";
-import {createClient, SupabaseClient, User} from "@supabase/supabase-js";
-import {environment} from "../../../enviroments/enviroment";
-import {boards, BoardsModel, ListCards, ListsModel} from "../../shared/models/data.model";
-import {Observable} from "rxjs";
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+import { environment } from '../../../enviroments/enviroment';
+import {
+  boards,
+  BoardsModel,
+  ListCards,
+  ListsModel,
+} from '../../shared/models/data.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss']
+  styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements OnInit, OnChanges{
-  user$: Observable<User> = this.auth.currentUser
+export class MainPageComponent implements OnInit, OnChanges {
+  user$: Observable<User> = this.auth.currentUser;
   boards: BoardsModel[] = [];
-  lists: ListsModel[] = []
-  listCards: ListCards = {}
-  boardInfo: boards | null = null
+  lists: ListsModel[] = [];
+  listCards: ListCards = {};
+  boardInfo: boards | null = null;
 
-  boardId: string | null = null
-  editTitle: any = {}
-  editCard: any = {}
+  boardId: string | null = null;
+  editTitle: any = {};
+  editCard: any = {};
 
-  titleChanged = false
-  dataDownloaded = false
-  addUserEmail = ''
+  titleChanged = false;
+  dataDownloaded = false;
+  addUserEmail = '';
 
-  private supabase: SupabaseClient
+  private supabase: SupabaseClient;
   constructor(
     private auth: AuthService,
     private dataService: DataService,
@@ -37,103 +42,102 @@ export class MainPageComponent implements OnInit, OnChanges{
     this.supabase = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
-    )
-    this.user$ = this.auth.currentUser
+    );
+    this.user$ = this.auth.currentUser;
   }
 
   async ngOnInit() {
-    this.boards = await this.dataService.getBoards()
-    this.boardId = this.route.snapshot.paramMap.get('id')
+    this.boards = await this.dataService.getBoards();
+    this.boardId = this.route.snapshot.paramMap.get('id');
 
     if (this.boardId) {
-      const board = await this.dataService.getBoardInfo(this.boardId)
-      this.boardInfo = board.data
-      this.lists = await this.dataService.getBoardLists(this.boardId)
+      const board = await this.dataService.getBoardInfo(this.boardId);
+      this.boardInfo = board.data;
+      this.lists = await this.dataService.getBoardLists(this.boardId);
       for (let list of this.lists) {
-        this.listCards[list.id] = await this.dataService.getListCards(list.id)
+        this.listCards[list.id] = await this.dataService.getListCards(list.id);
       }
-      this.dataDownloaded = true
+      this.dataDownloaded = true;
     }
     if (this.boards.length === 0) {
-      this.startBoard()
+      this.startBoard();
     }
-    this.handleRealtimeUpdates()
-    this.dataDownloaded = true
+    this.handleRealtimeUpdates();
+    this.dataDownloaded = true;
   }
 
   async changeBoard(boardId: string) {
-    this.boardId = boardId
-    const board = await this.dataService.getBoardInfo(boardId)
-    this.boardInfo = board.data
-    this.lists = await this.dataService.getBoardLists(boardId)
+    this.boardId = boardId;
+    const board = await this.dataService.getBoardInfo(boardId);
+    this.boardInfo = board.data;
+    this.lists = await this.dataService.getBoardLists(boardId);
     for (let list of this.lists) {
-      this.listCards[list.id] = await this.dataService.getListCards(list.id)
+      this.listCards[list.id] = await this.dataService.getListCards(list.id);
     }
-
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('changes in main')
+    console.log('changes in main');
   }
 
   async startBoard() {
-    console.log('add')
-    console.log(this.boards)
-    await this.dataService.startBoard()
-    console.log(this.boards)
-    let boardsLength = this.boards.length - 1
+    console.log('add');
+    console.log(this.boards);
+    await this.dataService.startBoard();
+    console.log(this.boards);
+    let boardsLength = this.boards.length - 1;
 
     if (boardsLength > 0) {
-      const newBoard = this.boards[boardsLength]
+      const newBoard = this.boards[boardsLength];
       // this.router.navigateByUrl(`/groups/${newBoard.boards.id}`)
     }
   }
 
   signOut() {
-    this.auth.logout()
+    this.auth.logout();
   }
 
   // BOARD logic
   async saveBoardTitle() {
-    await this.dataService.updateBoard(this.boardInfo)
-    this.titleChanged = false
+    await this.dataService.updateBoard(this.boardInfo);
+    this.titleChanged = false;
   }
 
   async deleteBoard(boardId: number) {
-    await this.dataService.deleteBoard(boardId)
+    await this.dataService.deleteBoard(boardId);
   }
 
   // LISTS logic
   async addList() {
-    await this.dataService.addBoardList(this.boardId!, this.lists.length)
+    await this.dataService.addBoardList(this.boardId!, this.lists.length);
   }
 
   editingTitle(list: any, edit = false) {
-    this.editTitle[list.id] = edit
+    this.editTitle[list.id] = edit;
   }
 
   async updateListTitle(list: any) {
-    await this.dataService.updateBoardList(list)
-    this.editingTitle(list, false)
+    await this.dataService.updateBoardList(list);
+    this.editingTitle(list, false);
   }
 
   async deleteBoardList(list: any) {
-    await this.dataService.deleteBoardList(list)
+    await this.dataService.deleteBoardList(list);
   }
 
   // Invites
   async addUser() {
-    await this.dataService.addUserToBoard(this.boardId!, this.addUserEmail)
-    this.addUserEmail = ''
+    await this.dataService.addUserToBoard(this.boardId!, this.addUserEmail);
+    this.addUserEmail = '';
   }
 
   dataCheck() {
-    return this.lists.length && Object.keys(this.listCards).length
+    return this.lists.length && Object.keys(this.listCards).length;
   }
 
   handleRealtimeUpdates() {
     this.dataService.getTableChanges().subscribe((update: any) => {
-      console.log('Update Frontend After Changes in BD!')
+      console.log('Update Frontend After Changes in BD!');
       const record = update.new?.id ? update.new : update.old;
       const event = update.eventType;
 
@@ -154,7 +158,7 @@ export class MainPageComponent implements OnInit, OnChanges{
         } else if (event === 'DELETE') {
           this.listCards[record.list_id] = this.listCards[
             record.list_id
-            ].filter((card: any) => card.id !== record.id);
+          ].filter((card: any) => card.id !== record.id);
         }
       } else if (update.table == 'lists') {
         if (event === 'INSERT') {
@@ -172,17 +176,17 @@ export class MainPageComponent implements OnInit, OnChanges{
             newArr.push(list);
           }
           this.lists = newArr;
-        }  else if (event === 'DELETE') {
+        } else if (event === 'DELETE') {
           this.lists = this.lists.filter((list: any) => list.id !== record.id);
         }
       } else if (update.table == 'boards') {
         if (event === 'INSERT') {
-          console.log(record)
-          console.log(this.boards)
-          let key = this.boards[this.boards.length - 1]
+          console.log(record);
+          console.log(this.boards);
+          let key = this.boards[this.boards.length - 1];
           let newBoard = {
-            key: record
-          }
+            key: record,
+          };
           // this.boards.push(newBoard)
         }
       }

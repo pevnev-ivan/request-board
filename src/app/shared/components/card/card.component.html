@@ -11,7 +11,7 @@
     <div class="card__header">
       <div class="card__header-info-wrapper">
         <p class="card__header-title">{{card.title}}</p>
-<!--        <p class="card__header-text">{{task.price | currency: 'RUB':'symbol-narrow'}}</p>-->
+        <p class="card__header-text">{{card.price | currency: 'RUB':'symbol-narrow'}}</p>
         <p class="card__body-text_small">{{card.created_at | date: 'dd MMMM yyyy' : '' : 'ru'}}</p>
       </div>
       <div class="card__header-icons-wrapper">
