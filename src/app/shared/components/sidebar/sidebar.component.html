@@ -1,0 +1,33 @@
+<aside class="sidebar">
+  <div class="sidebar__container">
+    <div class="sidebar__items-wrapper">
+      <div class="sidebar__links">
+        <div *ngFor="let board of boards " class="sidebar__links-container">
+        <button
+          (click)="onChangeBoard(board.boards.id)"
+          routerLink="/groups/{{ board.boards.id }}"
+          class="sidebar__item-link"
+        > {{board.boards.title}}
+        </button>
+          <button
+            (click)="onDeleteBoard(board.boards.id)"
+            class="sidebar__delete-board-btn"
+            >
+            <mat-icon class="sidebar__delete-icon">delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <button
+        (click)="onStartBoard()"
+        class="sidebar__add-btn">Добавить группу +
+      </button>
+
+    </div>
+
+    <div class="sidebar__settings-btn_wrapper">
+      <img src="../../../../assets/icons/settings.svg" alt="settings" class="sidebar__settings-btn-icon">
+      <a class="sidebar__settings-link">Настройки меню</a>
+    </div>
+  </div>
+</aside>

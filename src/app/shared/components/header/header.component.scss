@@ -1,0 +1,64 @@
+
+.header {
+  &__container {
+    padding: 13px 64px 14px 31px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__title {
+    font-size: 18px;
+    color: var(--main-text);
+    font-family: "inter-bold", sans-serif;
+  }
+
+  &__name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  &__btn {
+    width: 18px;
+    height: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    span {
+      width: 18px;
+      height: 2px;
+      background-color: var(--main-text);
+    }
+  }
+}
+
+.user {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  &__image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__login {
+    font-size: 16px;
+    font-family: "inter-regular", sans-serif;
+  }
+
+  &__role {
+    font-size: 12px;
+    font-family: "inter-regular", sans-serif;
+    opacity: 60%;
+  }
+}

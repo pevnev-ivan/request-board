@@ -1,0 +1,47 @@
+<div *ngIf="user$ | async as user;">
+<app-header
+  [user]="user"
+  (signOut)="signOut()"
+></app-header>
+<main class="main-page" *ngIf="dataDownloaded">
+  <app-sidebar
+    [boards]="boards"
+    [boardId]="boardId"
+    (startBoard)="startBoard()"
+    (changeBoard)="changeBoard($event)"
+    (deleteBoard)="deleteBoard($event)"
+  >
+  </app-sidebar>
+  <div class="main-page__content-container">
+    <app-searchbox></app-searchbox>
+    <app-card-list
+      *ngIf="boardId"
+      [user]="user"
+      [lists]="lists"
+      [boardId]="boardId"
+      [editTitle]="editTitle"
+      [editCard]="editCard"
+      [boardInfo]="boardInfo"
+      [titleChanged]="titleChanged"
+      [listCards]="listCards"
+      [addUserEmail]="addUserEmail"
+
+      [addList]="addList"
+      (deleteBoardList)="deleteBoardList($event)"
+
+    >
+    </app-card-list>
+  </div>
+</main>
+
+</div>
+
+<!--(editingTitle)="editingTitle($event)"-->
+<!--(updateListTitle)="updateListTitle($event)"-->
+
+<!--(addCard)="addCard($event)"-->
+<!--(editingCard)="editingCard($event)"-->
+<!--(updateCard)="updateCard($event)"-->
+<!--(deleteCard)="deleteCard($event)"-->
+
+

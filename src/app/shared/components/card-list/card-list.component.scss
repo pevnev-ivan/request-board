@@ -1,0 +1,85 @@
+
+.card-list {
+  display: flex;
+  gap: 32px;
+  width: 150vh;
+  height: 75vh;
+
+  overflow-x: scroll;
+  &__container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    display: flex;
+    flex-direction: column;
+    padding: 16px 8px 8px 8px;
+    gap: 8px;
+    align-items: center;
+    height: 100%;
+    min-width: 230px;
+    flex-grow: 1;
+    flex-basis: 0;
+    background-color: var(--card-bg);
+    overflow-y: scroll;
+
+  }
+  &__container::-webkit-scrollbar {
+    display: none;
+  }
+
+
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__title {
+    font-family: "inter-bold", sans-serif;
+    font-size: 12px;
+  }
+
+  &__counter {
+    text-align: center;
+    line-height: 200%;
+    font-family: "inter-semi-bold", sans-serif;
+    font-size: 10px;
+    color: var(--secondary-text);
+    background-color: var(--notifications-bg);
+    width: 23px;
+    height: 20px;
+    border-radius: 50px;
+  }
+
+  &__sum {
+    text-align: center;
+    opacity: 30%;
+    font-size: 32px;
+    font-family: "inter-light", sans-serif;
+  }
+
+  &__btn {
+    color: var(--tertiary-text);
+    background-color: var(--secondary-btn);
+    font-family: "inter-regular", sans-serif;
+
+    width: 289px;
+    height: 32px;
+
+    font-size: 14px;
+  }
+  .cdk-drag-placeholder {
+    opacity: 0;
+  }
+  &__add-card-btn {
+    min-width: 240px;
+    background-color: var(--card-bg);
+    padding: 20px;
+    height: 20px;
+  }
+  &__add-card-input {
+
+    min-width: 230px;
+    height: 20px;
+  }
+}

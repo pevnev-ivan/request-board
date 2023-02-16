@@ -1,0 +1,38 @@
+.page {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-page {
+  height: 50%;
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__app-name {
+    font-family: "inter-bold", sans-serif;
+    font-size: 3em;
+    padding: 40px;
+    color: var(--main-text)
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__login-btn {
+    width: 100%;
+    padding: 25px 0 25px 0;
+  }
+}

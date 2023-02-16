@@ -1,0 +1,71 @@
+
+.sidebar {
+  &__container {
+    padding: 19px 0 0 22px;
+    width: 268px;
+
+    display: flex;
+
+    flex-direction: column;
+    justify-content: space-between;
+    height: 92vh;
+  }
+  &__items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  &__links-container {
+    display: flex;
+    gap: 40px;
+  }
+  &__delete-board-btn {
+    height: 30px;
+    width: 30px;
+    font-family: "inter-semi-bold", sans-serif;
+    font-size: 12px;
+    color: var(--counter-text);
+    align-self: center;
+    justify-self: center;
+    background: var(--accent-notifications-bg);
+    border-radius: 50px;
+  }
+  &__delete-icon {
+    transform: scale(0.6);
+  }
+
+  &__item-link {
+    font-family: "inter-regular", sans-serif;
+    font-size: 16px;
+    opacity: 60%;
+  }
+
+  &__add-btn {
+    height: 32px;
+    width: 176px;
+    color: var(--main-btn);
+    border: 1px solid var(--main-btn);
+    border-radius: 99px;
+  }
+
+  &__settings-btn_wrapper {
+    display: flex;
+
+    align-items: center;
+    gap: 12px;
+  }
+  &__settings-btn-icon {
+    width: 12px;
+    height: 12px;
+  }
+  &__settings-link {
+    font-size: 12px;
+    font-family: "inter-regular", sans-serif;
+    opacity: 60%;
+  }
+}

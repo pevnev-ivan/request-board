@@ -1,0 +1,89 @@
+<div
+
+  class="card"
+
+
+
+>
+  <div class="card__container">
+
+    <div class="card__color-indicator"></div>
+    <div class="card__header">
+      <div class="card__header-info-wrapper">
+        <p class="card__header-title">{{card.title}}</p>
+<!--        <p class="card__header-text">{{task.price | currency: 'RUB':'symbol-narrow'}}</p>-->
+        <p class="card__body-text_small">{{card.created_at | date: 'dd MMMM yyyy' : '' : 'ru'}}</p>
+      </div>
+      <div class="card__header-icons-wrapper">
+        <img class="card__header-icon" src="../../../../assets/icons/phone.svg" alt="phone">
+        <img class="card__header-icon" src="../../../../assets/icons/mail.svg" alt="mail">
+        <img class="card__header-icon" src="../../../../assets/icons/message.svg" alt="message">
+      </div>
+    </div>
+    <div class="card__body">
+      <div class="card__body-wrapper">
+        <p class="card__body-date">Дата изменения</p>
+<!--        <p class="card__body-text">{{task.modifiedDate | date: 'dd MMMM yyyy' : '' : 'ru'}}</p>-->
+        <div class="card__body-user-wrapper">
+          <p class="card__body-text_small">Исполнитель</p>
+          <div class="card__body-user-info-wrapper">
+            <img class="card__body-user-img" src="" alt="">
+            <p class="card__body-user-name">{{card.assigned_to}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card__footer">
+      <div class="card__footer-counter-wrapper">
+        <p class="card__body-text_small">Дела</p>
+        <p class="card__footer-counter">3</p>
+      </div>
+      <button class="card__footer-edit-btn">+ Редактировать</button>
+    </div>
+  </div>
+</div>
+
+<!--<div-->
+<!--  *ngIf="task"-->
+<!--  class="card"-->
+
+
+
+<!--&gt;-->
+<!--  <div class="card__container">-->
+
+<!--    <div class="card__color-indicator"></div>-->
+<!--    <div class="card__header">-->
+<!--      <div class="card__header-info-wrapper">-->
+<!--        <p class="card__header-title">{{task.title}}</p>-->
+<!--        <p class="card__header-text">{{task.price | currency: 'RUB':'symbol-narrow'}}</p>-->
+<!--        <p class="card__body-text_small">{{task.startDate | date: 'dd MMMM yyyy' : '' : 'ru'}}</p>-->
+<!--      </div>-->
+<!--      <div class="card__header-icons-wrapper">-->
+<!--        <img class="card__header-icon" src="../../../../assets/icons/phone.svg" alt="phone">-->
+<!--        <img class="card__header-icon" src="../../../../assets/icons/mail.svg" alt="mail">-->
+<!--        <img class="card__header-icon" src="../../../../assets/icons/message.svg" alt="message">-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="card__body">-->
+<!--      <div class="card__body-wrapper">-->
+<!--        <p class="card__body-date">Дата изменения</p>-->
+<!--        <p class="card__body-text">{{task.modifiedDate | date: 'dd MMMM yyyy' : '' : 'ru'}}</p>-->
+<!--        <div class="card__body-user-wrapper">-->
+<!--          <p class="card__body-text_small">Исполнитель</p>-->
+<!--          <div class="card__body-user-info-wrapper">-->
+<!--            <img class="card__body-user-img" src="{{userInfo.img}}" alt="">-->
+<!--            <p class="card__body-user-name">{{userInfo.login}}</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="card__footer">-->
+<!--      <div class="card__footer-counter-wrapper">-->
+<!--        <p class="card__body-text_small">Дела</p>-->
+<!--        <p class="card__footer-counter">3</p>-->
+<!--      </div>-->
+<!--      <button class="card__footer-edit-btn">+ Редактировать</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->

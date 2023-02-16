@@ -1,0 +1,39 @@
+<div class="card-list"  cdkDropListGroup>
+  <div   cdkDropList  *ngFor="let list of lists; let i = index;"
+         [cdkDropListData]="listCards[list.id]"
+         (cdkDropListDropped)="drop($event)"
+  >
+
+    <div  class="card-list__container" >
+
+      <div class="card-list__header">
+        <p class="card-list__title">{{list.title | uppercase}}</p>
+        <p class="card-list__counter"></p>
+      </div>
+      <p class="card-list__sum"></p>
+      <button (click)="addCardFast(list, user.email!)" class="card-list__btn">+ Быстрая сделка</button>
+      <button (click)="onDeleteBoardList(list)" class="card-list__btn">Удалить</button>
+      <app-card
+        *ngFor="let card of listCards[list.id]"
+        [card]="card"
+        [cardListId]="card.id" cdkDrag
+      ><
+      </app-card>
+
+    </div>
+  </div>
+
+  <div>
+    <button
+     (click)="addList()"
+      class="card-list__add-card-btn"
+      mat-button
+
+    >Добавьте еще одну колонку
+    </button>
+
+  </div>
+
+</div>
+
+

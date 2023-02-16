@@ -1,0 +1,11 @@
+
+.main-page {
+  display: flex;
+  &__content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    flex-grow: 1;
+    padding: 52px 24px 56px 40px;
+  }
+}
