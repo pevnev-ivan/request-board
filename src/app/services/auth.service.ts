@@ -38,7 +38,7 @@ export class AuthService {
     return this.supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `https://request-board.vercel.app/`,
       },
     });
   }
