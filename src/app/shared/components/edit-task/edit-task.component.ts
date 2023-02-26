@@ -72,7 +72,7 @@ export class EditTaskComponent implements OnInit {
 
   async addCard() {
     this.newCard.edited_at = new Date();
-
+    this.card = { ...this.newCard };
     if (this.initialList !== this.newCard.list_id) {
       this.newCard.position = this.listCards[this.newCard.list_id].length;
       transferArrayItem(
