@@ -47,7 +47,6 @@ export class AddTaskComponent implements OnInit {
     }
     this.newCardEmail = this.userEmailList[0];
     this.newListTitle = this.lists[0].title;
-    debugger;
   }
 
   setListForCard(listId: string, listTitle: string): void {
