@@ -1,9 +1,9 @@
-
 .search-box {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
+
   &__title {
     font-size: 24px;
     font-family: "inter-bold", sans-serif;
@@ -60,7 +60,7 @@
     justify-content: center;
     align-items: center;
     gap: 14px;
-    background:  var(--secondary-btn);
+    background: var(--secondary-btn);
     border-radius: 4px;
     width: 152px;
     height: 40px;
@@ -80,4 +80,24 @@
     background: var(--accent-notifications-bg);
     border-radius: 50px;
   }
+}
+
+.low {
+  background-color: var(--yellow-card-header);
+}
+.mid {
+  background-color: var(--purple-card-header);
+}
+.high {
+  background-color: var(--cian-card-header);
+}
+
+.low-text {
+  color: var(--yellow-card-header);
+}
+.mid-text {
+  color: var(--purple-card-header);
+}
+.high-text {
+  color: var(--cian-card-header);
 }

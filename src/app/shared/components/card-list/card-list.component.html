@@ -1,38 +1,61 @@
 <div class="card-list" cdkDropListGroup>
   <div cdkDropList *ngFor="let list of lists; let i = index;"
+       [id]=list.id
        [cdkDropListData]="listCards[list.id]"
        (cdkDropListDropped)="drop($event)"
   >
     <div class="card-list__container">
       <div class="card-list__header">
-        <p class="card-list__title">{{list.title | uppercase}}</p>
+        <p class="card-list__title"
+           *ngIf="!editTitle[list.id]"
+           (click)="editingTitle(list, true)"
+        >{{list.title | uppercase}}</p>
+        <input class="card-list__title-edit"
+               *ngIf="editTitle[list.id]"
+               [(ngModel)]="list.title"
+               (change)="updateListTitle(list)"
+               (blur)="updateListTitle(list)"
+               (keyup.enter)="updateListTitle(list)"
+        />
         <p class="card-list__counter">{{listCards[list.id].length}}</p>
       </div>
-      <p class="card-list__sum">{{getCardsSum(listCards[list.id])}}</p>
-      <button (click)="addCardFast(list, user.email!)" class="card-list__btn">+ Быстрая сделка</button>
-      <button (click)="onDeleteBoardList(list)" class="card-list__btn">Удалить</button>
-      <app-card
-        *ngFor="let card of listCards[list.id]"
-        [card]="card"
-        [user]="user"
-        [cardListId]="card.id" cdkDrag
-      ><
-      </app-card>
+      <p class="card-list__sum">{{getCardsSum(listCards[list.id]) | currency: 'RUB':'symbol-narrow' :'.0'  }}</p>
+      <div class="card-list__buttons-container">
 
+        <button (click)="addCardFast(list, user.email!, listCards[list.id].length)"
+                class="card-list__btn">+ Fast request
+        </button>
+        <button (click)="onDeleteBoardList(list)" class="card-list__btn">Delete</button>
+      </div>
+      <div class="card-list__cards">
+        <app-card *ngFor="let card of listCards[list.id]
+        | filterTaskByName: searchQuery
+        | filterTaskByPriority: priorityId"
+                  [list]="list"
+                  [lists]="lists"
+                  [card]="card"
+                  [user]="user"
+                  [users]="users"
+                  [listCards]="listCards"
+                  [cardListId]="card.id"
+                  (deleteCard)="deleteCard($event)"
+                  cdkDrag
+        ><
+        </app-card>
+      </div>
     </div>
   </div>
 
   <div>
-    <button
-      (click)="addList()"
-      class="card-list__add-card-btn"
-      mat-button
+    <button (click)="addList(lists.length)"
+            class="card-list__add-card-btn"
+            mat-button
     >
-      Добавьте еще одну колонку
+      Add one more List
     </button>
-
   </div>
-
 </div>
+
+
 
 

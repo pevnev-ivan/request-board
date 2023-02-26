@@ -1,16 +1,25 @@
-
 .header {
   &__container {
-    padding: 13px 64px 14px 31px;
-
+    padding: 24px 64px 20px 31px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid var(--border-color);
   }
   &__title {
+    //height: 76px;
     font-size: 18px;
     color: var(--main-text);
     font-family: "inter-bold", sans-serif;
+  }
+
+  &__user-info {
+    position: absolute;
+
+    top: 10px;
+    right: 24px;
+
+    z-index: 1000; /* or any value greater than the z-index of other content */
   }
 
   &__name-wrapper {
@@ -38,7 +47,12 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  &__settings {
+    display: flex;
 
+    flex-direction: column;
+    gap: 8px;
+  }
   &__image {
     width: 32px;
     height: 32px;
@@ -46,6 +60,7 @@
   }
 
   &__wrapper {
+    padding: 5px 20px;
     display: flex;
     flex-direction: column;
     gap: 4px;

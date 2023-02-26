@@ -1,7 +1,6 @@
-
 .sidebar {
   &__container {
-    padding: 19px 0 0 22px;
+    padding: 19px 10px 0 22px;
     width: 268px;
 
     display: flex;
@@ -9,6 +8,7 @@
     flex-direction: column;
     justify-content: space-between;
     height: 92vh;
+    border-right: 1px solid var(--border-color);
   }
   &__items-wrapper {
     display: flex;
@@ -22,21 +22,19 @@
   }
   &__links-container {
     display: flex;
+    justify-content: space-between;
     gap: 40px;
   }
-  &__delete-board-btn {
-    height: 30px;
-    width: 30px;
-    font-family: "inter-semi-bold", sans-serif;
-    font-size: 12px;
-    color: var(--counter-text);
-    align-self: center;
-    justify-self: center;
-    background: var(--accent-notifications-bg);
-    border-radius: 50px;
+  &__buttons-container {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__edit-icon {
+    transform: scale(0.8);
   }
   &__delete-icon {
-    transform: scale(0.6);
+    transform: scale(0.8);
   }
 
   &__item-link {
@@ -68,4 +66,9 @@
     font-family: "inter-regular", sans-serif;
     opacity: 60%;
   }
+}
+
+.sidebar__item-link.active {
+  opacity: 1;
+  font-family: "inter-bold", sans-serif;
 }

@@ -1,17 +1,49 @@
 <div class="search-box">
-  <p class="search-box__title">Заявки</p>
+  <p class="search-box__title">Requests</p>
   <button
     (click)="openDialog()"
-    class="search-box__add-btn">+ Добавить сделку</button>
+    class="search-box__add-btn">+ Add request
+  </button>
   <div class="search-box__input-container">
-    <input type="text" class="search-box__input">
-      <button class="search-box__reset-btn"><img src="../../../../assets/icons/reset.svg" alt="reset"></button>
-      <button class="search-box__search-btn"><img src="../../../../assets/icons/search.svg" alt="search"></button>
+    <input [(ngModel)]="searchValue"
+           (change)="onSearchBoxChange()" type="text" class="search-box__input">
+    <button (click)="onClearSearchBox()"
+            class="search-box__reset-btn">
+      <img src="../../../../assets/icons/reset.svg"
+           alt="reset">
+    </button>
+    <button (click)="onSearchBoxChange()"
+            class="search-box__search-btn">
+      <img src="../../../../assets/icons/search.svg"
+           alt="search">
+    </button>
   </div>
   <div class="search-box__filter-btn-container">
-    <button class="search-box__filter-btn">Фильтры</button>
+    <button class="search-box__filter-btn"
+            [matMenuTriggerFor]="priorities"
+    >Filters</button>
+    <mat-menu #priorities="matMenu">
+      <ng-container *ngFor="let priority of allPriorities">
+        <button
+          mat-menu-item
+          (click)="onPriorityFilterChange(priority.id)"
+          [class.active]="priorityId === priority.id"
+        >
+        <span
+          [ngClass]="{
+      'low-text': priority.id === 0,
+      'mid-text': priority.id === 1,
+      'high-text': priority.id === 2
+      }">
+        {{ priority.name }}</span
+        >
+        </button>
+      </ng-container>
+      <button mat-menu-item (click)="onPriorityFilterChange(allPriorities.length)">
+        Reset Filters
+      </button>
+    </mat-menu>
     <span class="search-box__filter-counter">5</span>
   </div>
-
 </div>
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../enviroments/enviroment';
 import { Subject } from 'rxjs';
-import { card } from '../shared/models/data.model';
+import { boards, card, ListsModel } from '../shared/models/data.model';
 
 export const BOARDS_TABLE = 'boards';
 export const USER_BOARDS_TABLE = 'user_boards';
@@ -15,11 +15,35 @@ export const USERS_TABLE = 'users';
 })
 export class DataService {
   private supabase: SupabaseClient;
+
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
     );
+  }
+
+  async getAllListCards() {
+    const lists = await this.supabase
+      .from(CARDS_TABLE)
+      .select('*')
+      .order('position');
+
+    return lists.data || [];
+  }
+
+  async getAllLists() {
+    const lists = await this.supabase
+      .from(LISTS_TABLE)
+      .select('*')
+      .order('position');
+
+    return lists.data || [];
+  }
+
+  async getAllBoards() {
+    const boards = await this.supabase.from(USER_BOARDS_TABLE).select('*');
+    return boards.data || [];
   }
 
   async startBoard() {
@@ -35,14 +59,22 @@ export class DataService {
 
   // CRUD Board
   async getBoardInfo(boardId: string) {
-    return this.supabase
+    const boardInfo = await this.supabase
       .from(BOARDS_TABLE)
       .select('*')
       .match({ id: boardId })
       .single();
+    return boardInfo.data;
   }
 
-  async updateBoard(board: any) {
+  async getCurrentUser() {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
+    return user;
+  }
+
+  async updateBoard(board: boards) {
     return this.supabase
       .from(BOARDS_TABLE)
       .update(board)
@@ -64,31 +96,43 @@ export class DataService {
     return lists.data || [];
   }
 
-  async addBoardList(boardId: string, position = 0) {
+  async addBoardList(boardId: string, position = 0, length: number) {
     return this.supabase
       .from(LISTS_TABLE)
-      .insert({ board_id: boardId, position, title: 'New List' })
+      .insert({ board_id: boardId, position, title: 'New List ' + length })
       .select('*')
       .single();
   }
 
-  async updateBoardList(list: any) {
+  async updateBoardList(list: ListsModel) {
     return this.supabase.from(LISTS_TABLE).update(list).match({ id: list.id });
   }
 
-  async deleteBoardList(list: any) {
+  async deleteBoardList(list: ListsModel) {
     return this.supabase.from(LISTS_TABLE).delete().match({ id: list.id });
   }
 
   // CRUD Cards
-  async addListCard(listId: string, boardId: string, position = 0) {
+  async addListCard(
+    title: string,
+    listId: string,
+    boardId: string,
+    price: number,
+    priority: number,
+    position = 0,
+    owner_email: string
+  ) {
     return this.supabase
       .from(CARDS_TABLE)
       .insert({
         board_id: boardId,
         list_id: listId,
         position,
-        title: 'new Card',
+        title,
+        price,
+        priority,
+        owner_email,
+        edited_at: new Date(),
       })
       .select('*')
       .single();
@@ -98,7 +142,8 @@ export class DataService {
     listId: string,
     boardId: string,
     position = 0,
-    email: string
+    email: string,
+    cardListLength: number
   ) {
     return this.supabase
       .from(CARDS_TABLE)
@@ -106,18 +151,12 @@ export class DataService {
         board_id: boardId,
         list_id: listId,
         position,
-        title: 'new Card',
-        assigned_to: email,
+        title: 'new Card ' + cardListLength,
+        owner_email: email,
         price: 1000,
+        priority: 0,
+        edited_at: new Date(),
       })
-      .select('*')
-      .single();
-  }
-
-  swapCard(card: card) {
-    return this.supabase
-      .from(CARDS_TABLE)
-      .insert({ ...card })
       .select('*')
       .single();
   }
@@ -132,12 +171,16 @@ export class DataService {
     return lists.data || [];
   }
 
-  async updateCard(card: any) {
+  async updateCard(card: card) {
+    card.edited_at = new Date();
     return this.supabase.from(CARDS_TABLE).update(card).match({ id: card.id });
   }
 
-  async deleteCard(card: any) {
-    return this.supabase.from(CARDS_TABLE).delete().match({ id: card.id });
+  async deleteCard(card: card) {
+    return this.supabase
+      .from(CARDS_TABLE)
+      .delete()
+      .match({ id: card.id, list_id: card.list_id });
   }
 
   // Invite others
@@ -153,11 +196,24 @@ export class DataService {
       const userBoard = await this.supabase.from(USER_BOARDS_TABLE).insert({
         user_id: userId,
         board_id: boardId,
+        email,
+      });
+      await this.supabase.from('users_in_board').insert({
+        board_id: boardId,
+        email: email,
       });
       return userBoard;
     } else {
       return null;
     }
+  }
+
+  async getUsersFromBoard(board_id: string) {
+    const users = await this.supabase
+      .from('users_in_board')
+      .select('*')
+      .match({ board_id });
+    return users.data || [];
   }
 
   getTableChanges() {

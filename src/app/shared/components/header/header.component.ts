@@ -1,26 +1,38 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {User} from "@supabase/supabase-js";
-
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { User } from '@supabase/supabase-js';
+import { MatDialog } from '@angular/material/dialog';
+import { AddUserComponent } from '../add-user/add-user.component';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit{
-  @Output() signOut: EventEmitter<any> = new EventEmitter<any>()
-  @Input() user!: User
+export class HeaderComponent {
+  @Input() user: User | null;
+  @Input() boardId: string;
+  @Input() headerToggle: boolean;
 
-  showSubMenu = false
+  @Output() signOut: EventEmitter<void> = new EventEmitter<void>();
+  @Output() toggleSidebar: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor() {
+  showSubMenu = false;
+  panelOpenState = false;
 
+  constructor(private readonly dialog: MatDialog) {}
+
+  onSignOut() {
+    this.signOut.emit();
   }
 
-  ngOnInit() {
-
+  public openDialog() {
+    this.dialog.open(AddUserComponent, {
+      data: {
+        boardId: this.boardId,
+      },
+    });
   }
 
-  onSignOut () {
-    this.signOut.emit()
+  onToggleSidebar() {
+    this.toggleSidebar.emit();
   }
 }

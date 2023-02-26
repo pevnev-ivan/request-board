@@ -1,20 +1,36 @@
-<header class="header" >
+<header class="header">
   <div class="header__container">
     <div class="header__name-wrapper">
-      <div class="header__btn">
+      <button (click)="onToggleSidebar()" class="header__btn">
         <span></span>
         <span></span>
         <span></span>
-      </div>
-      <p class="header__title">Доска заявок на сервисное обслуживание</p>
+      </button>
+      <p class="header__title">Service request board</p>
     </div>
-    <div  class="header__user user">
-      <img ngxGravatar [email]="user.email || ''" alt="" class="user__image">
-      <div class="user__wrapper">
-        <p class="user__login">{{user.email}}</p>
-        <p class="user__role">Администратор</p>
-      </div>
-      <button  mat-raised-button (click)="onSignOut()">Logout</button>
+    <div class="header__user user">
+      <mat-expansion-panel (opened)="panelOpenState = true"
+                           (closed)="panelOpenState = false"
+                           class="mat-elevation-z0 header__user-info"
+
+      >
+        <mat-expansion-panel-header>
+            <div class="header__user user">
+              <img ngxGravatar [email]="user?.email || ''" alt="" class="user__image">
+              <div>
+                <div class="user__wrapper">
+                  <p class="user__login">{{user?.email}}</p>
+                  <p class="user__role">Administrator</p>
+                </div>
+              </div>
+            </div>
+        </mat-expansion-panel-header>
+        <div class="user__settings">
+          <button mat-raised-button (click)="openDialog()">Add User</button>
+          <button mat-raised-button (click)="onSignOut()">Logout</button>
+        </div>
+      </mat-expansion-panel>
     </div>
+
   </div>
 </header>

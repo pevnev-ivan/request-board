@@ -1,0 +1,27 @@
+<mat-dialog-content>
+
+  <div class="add-user">
+    <span>(user must be authorized in this app)</span>
+    <input
+      type="text"
+      class="nameInput"
+      placeholder="Enter Email"
+      #nameInput
+      [(ngModel)]="userEmail"
+    />
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button class="exit-dialog" (click)="closeDialog()">
+    Отменить
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    class="save-info"
+    (click)="addUser()"
+  >
+    Сохранить
+  </button>
+</mat-dialog-actions>

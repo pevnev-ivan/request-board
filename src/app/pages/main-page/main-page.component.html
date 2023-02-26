@@ -1,47 +1,54 @@
-<div *ngIf="user$ | async as user;">
-<app-header
-  [user]="user"
-  (signOut)="signOut()"
+<app-header *ngIf="user"
+            [user]="user"
+            [boardId]="boardId"
+            [headerToggle]="headerToggle"
+            (signOut)="signOut()"
+            (toggleSidebar)="toggleSidebar()"
 ></app-header>
-<main class="main-page" *ngIf="dataDownloaded">
-  <app-sidebar
-    [boards]="boards"
-    [boardId]="boardId"
-    (startBoard)="startBoard()"
-    (changeBoard)="changeBoard($event)"
-    (deleteBoard)="deleteBoard($event)"
+
+<main class="main-page">
+  <app-sidebar [boards]="boards"
+               [boardId]="boardId"
+               [editBoardTitle]="editBoardTitle"
+               [headerToggle]="headerToggle"
+               (startBoard)="startBoard()"
+               (deleteBoard)="deleteBoard($event)"
+               (updateBoardTitle)="updateBoardTitle($event)"
   >
   </app-sidebar>
   <div class="main-page__content-container">
-    <app-searchbox></app-searchbox>
-    <app-card-list
-      *ngIf="boardId"
-      [user]="user"
-      [lists]="lists"
-      [boardId]="boardId"
-      [editTitle]="editTitle"
-      [editCard]="editCard"
-      [boardInfo]="boardInfo"
-      [titleChanged]="titleChanged"
-      [listCards]="listCards"
-      [addUserEmail]="addUserEmail"
+    <app-searchbox [user]="user"
+                   [users]="users"
+                   [lists]="lists"
+                   [boardId]="boardId"
+                   [listCards]="listCards"
+                   [searchQuery]="searchQuery"
+                   [priorityId]="priorityId"
+                   (changeFilterPriority)="changeFilterPriority($event)"
+                   (changeSearchQuery)="changeSearchQuery($event)"
+    >
+    </app-searchbox>
+    <div class="main-page__loading-container" *ngIf="boardId == ''">Choose or create board</div>
+    <div *ngIf="!dataDownloaded && boardId"
+         class="main-page__loading-container">
+      <p>Loading</p>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
 
-      [addList]="addList"
-      (deleteBoardList)="deleteBoardList($event)"
-
+    <app-card-list *ngIf="boardId && dataDownloaded && user"
+                   [user]="user"
+                   [users]="users"
+                   [lists]="lists"
+                   [boardId]="boardId"
+                   [listCards]="listCards"
+                   [priorityId]="priorityId"
+                   [searchQuery]="searchQuery"
+                   [addList]="addList"
+                   (deleteBoardList)="deleteBoardList($event)"
     >
     </app-card-list>
   </div>
 </main>
 
-</div>
-
-<!--(editingTitle)="editingTitle($event)"-->
-<!--(updateListTitle)="updateListTitle($event)"-->
-
-<!--(addCard)="addCard($event)"-->
-<!--(editingCard)="editingCard($event)"-->
-<!--(updateCard)="updateCard($event)"-->
-<!--(deleteCard)="deleteCard($event)"-->
 
 

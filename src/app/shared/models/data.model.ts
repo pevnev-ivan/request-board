@@ -31,5 +31,18 @@ export type card = {
   assigned_to: string;
   done: boolean;
   created_at: Date;
+  edited_at: Date;
   price: number;
+  priority: number;
+  owner_email: string;
+};
+
+export type editTitles = {
+  [key: string]: boolean;
+};
+
+export type users = {
+  id: number;
+  email: string;
+  board_id: number;
 };

@@ -1,11 +1,8 @@
-
-
 .card {
   min-width: 290px;
   background-color: var(--main-bg);
   &__color-indicator {
     height: 4px;
-    background-color: var(--yellow-card-header);
     border-radius: 4px 4px 0px 0px;
   }
   &__container {
@@ -53,6 +50,7 @@
   }
 
   &__header-icon {
+    cursor: pointer;
     height: 10px;
     width: 10px;
   }
@@ -141,4 +139,14 @@
 .none {
   display: none;
   visibility: hidden;
+}
+
+.low {
+  background-color: var(--yellow-card-header);
+}
+.mid {
+  background-color: var(--purple-card-header);
+}
+.high {
+  background-color: var(--cian-card-header);
 }

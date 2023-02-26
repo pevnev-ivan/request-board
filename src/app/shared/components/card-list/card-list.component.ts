@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import {
   CdkDragDrop,
@@ -7,7 +7,13 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../../../services/data.service';
-import { boards, card, ListCards, ListsModel } from '../../models/data.model';
+import {
+  card,
+  editTitles,
+  ListCards,
+  ListsModel,
+  users,
+} from '../../models/data.model';
 import { User } from '@supabase/supabase-js';
 
 @Component({
@@ -15,77 +21,71 @@ import { User } from '@supabase/supabase-js';
   templateUrl: './card-list.component.html',
   styleUrls: ['./card-list.component.scss'],
 })
-export class CardListComponent implements OnInit {
+export class CardListComponent {
   @Input() lists: ListsModel[] = [];
   @Input() listCards: ListCards = {};
-  @Input() boardInfo: boards | null = null;
-  @Input() boardId: string | null = null;
-  @Input() user!: User;
 
-  @Input() editTitle: any;
-  @Input() editCard: any;
-  @Input() titleChanged: any;
-  @Input() addUserEmail: any;
+  @Input() user: User;
+  @Input() users: users[];
+
+  @Input() searchQuery: string;
+  @Input() priorityId: number;
+  @Input() boardId: string;
 
   @Input() addList!: Function;
-  @Output() deleteBoardList: EventEmitter<string> = new EventEmitter<string>();
+  @Output() deleteBoardList: EventEmitter<ListsModel> =
+    new EventEmitter<ListsModel>();
+
+  filteredLists: ListsModel[] = [];
+  filteredListCards: ListCards = {};
 
   addCardToggle = false;
+  listEditToggle = false;
+  editTitle: editTitles = {};
 
   constructor(
     private route: ActivatedRoute,
     private dataService: DataService
   ) {}
 
-  async ngOnInit() {
-    console.log(this.listCards);
+  editingTitle(list: ListsModel, edit = false) {
+    this.editTitle[list.id] = edit;
   }
 
-  onDeleteBoardList(list: any) {
+  async updateListTitle(list: ListsModel) {
+    await this.dataService.updateBoardList(list);
+    this.editTitle[list.id] = false;
+  }
+
+  onDeleteBoardList(list: ListsModel) {
     this.deleteBoardList.emit(list);
   }
 
-  getCardsSum(list: any) {
-    return list.reduce((sum: number, card: card) => sum + card.price, 0);
+  getCardsSum(cards: card[]) {
+    return cards.reduce((sum: number, card: card) => sum + card.price, 0);
   }
 
-  // CARDS logic
-  async addCard(list: any) {
-    await this.dataService.addListCard(
-      list.id,
-      this.boardId!,
-      this.listCards[list.id].length
-    );
-  }
-
-  async addCardFast(list: any, email: string) {
+  async addCardFast(list: ListsModel, email: string, cardListLength: number) {
     await this.dataService.addListCardFast(
       list.id,
-      this.boardId!,
+      this.boardId,
       this.listCards[list.id].length,
-      email
+      email,
+      cardListLength
     );
-  }
-
-  editingCard(card: card, edit = false) {
-    this.editCard[card.id] = edit;
   }
 
   async updateCard(card: card) {
     await this.dataService.updateCard(card);
-    this.editingCard(card, false);
   }
 
   async deleteCard(card: card) {
     await this.dataService.deleteCard(card);
   }
 
-  async swapCard(card: card) {
-    await this.dataService.swapCard(card);
-  }
-
-  async drop(event: CdkDragDrop<any>) {
-    let listId = event.previousContainer.data[0].list_id;
+  async drop(event: CdkDragDrop<card[]>) {
+    let listId = +event.previousContainer.id;
+    let newListId = +event.container.id;
 
     if (event.previousContainer === event.container) {
       moveItemInArray(
@@ -100,34 +100,28 @@ export class CardListComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
-      let newListId = event.container.data[0].list_id;
-      if (event.container.data.length === 1) {
-        // this.swapCard(this.listCards[newListId][event.previousIndex]);
-      }
       this.listCards[newListId] = this.listCards[newListId].map(
         (card: card, index: number) => {
           return { ...card, position: index, list_id: newListId };
         }
       );
-      this.listCards[newListId].map((card: any, index: number) => {
+      this.listCards[newListId].map((card: card) => {
         this.updateCard(card);
       });
     }
-
     this.listCards[listId] = this.listCards[listId].map(
-      (card: any, index: number) => {
+      (card: card, index: number) => {
         return { ...card, position: index, list_id: listId };
       }
     );
-
-    this.listCards[listId].map((card: any, index: number) => {
+    this.listCards[listId].map((card: card) => {
       this.updateCard(card);
     });
   }
 
   getConnectedStatuses(listId: number) {
     return this.listCards[listId]
-      .filter((list: any) => list.id !== listId)
-      .map((list: any) => `index-${list.id}`);
+      .filter((card: card) => card.id !== listId)
+      .map((card: card) => `index-${card.id}`);
   }
 }

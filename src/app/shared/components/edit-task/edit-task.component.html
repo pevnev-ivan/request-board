@@ -7,7 +7,7 @@
       'mid': newCard.priority === 1,
       'high': newCard.priority === 2
       }">
-    </div >
+    </div>
 
     <div class="add-task__header-container">
 
@@ -48,7 +48,7 @@
              class="add-task__input"
              placeholder="Введите название задачи"
              #nameInput
-             [(ngModel)]="newCardTitle"
+             [(ngModel)]="newCard.title"
       />
     </div>
 
@@ -58,7 +58,7 @@
              class="add-task__input"
              placeholder="Введите стоимость задачи"
              #nameInput
-             [(ngModel)]="newCardPrice"
+             [(ngModel)]="newCard.price"
       />
     </div>
 
@@ -113,7 +113,7 @@
       <mat-menu #users="matMenu">
         <ng-container *ngFor="let user of userEmailList let i = index;">
           <button mat-menu-item
-                  (click)="newCardEmail = userEmailList[i]">
+                  (click)="newCard.owner_email = userEmailList[i]">
             <div class="add-task__input-user">
               <img ngxGravatar [email]="user"
                    alt="Фото пользователя"

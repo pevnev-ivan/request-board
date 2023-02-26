@@ -1,11 +1,22 @@
-
 .main-page {
   display: flex;
+  justify-content: center;
+
   &__content-container {
     display: flex;
     flex-direction: column;
+
     gap: 28px;
     flex-grow: 1;
     padding: 52px 24px 56px 40px;
+    max-width: calc(100% - 268px);
+  }
+  &__loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 50%;
+    margin: 10% auto;
   }
 }

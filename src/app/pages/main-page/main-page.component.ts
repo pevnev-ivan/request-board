@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
@@ -7,32 +7,41 @@ import { environment } from '../../../enviroments/enviroment';
 import {
   boards,
   BoardsModel,
+  card,
+  editTitles,
   ListCards,
   ListsModel,
+  users,
 } from '../../shared/models/data.model';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements OnInit, OnChanges {
-  user$: Observable<User> = this.auth.currentUser;
+export class MainPageComponent implements OnInit {
+  user: User | null;
+  users: users[];
+
   boards: BoardsModel[] = [];
   lists: ListsModel[] = [];
   listCards: ListCards = {};
+
   boardInfo: boards | null = null;
+  boardId: string;
 
-  boardId: string | null = null;
-  editTitle: any = {};
-  editCard: any = {};
-
+  searchQuery: string = '';
+  addUserEmail = '';
   titleChanged = false;
   dataDownloaded = false;
-  addUserEmail = '';
+  priorityId: number;
+
+  newBoardTitle: string;
+  editBoardTitle: editTitles = {};
+  headerToggle = true;
 
   private supabase: SupabaseClient;
+
   constructor(
     private auth: AuthService,
     private dataService: DataService,
@@ -43,64 +52,56 @@ export class MainPageComponent implements OnInit, OnChanges {
       environment.supabaseUrl,
       environment.supabaseKey
     );
-    this.user$ = this.auth.currentUser;
   }
 
   async ngOnInit() {
+    this.user = await this.dataService.getCurrentUser();
     this.boards = await this.dataService.getBoards();
-    this.boardId = this.route.snapshot.paramMap.get('id');
 
+    this.route.params.subscribe((params) => {
+      this.boardId = params['id'];
+      this.loadData();
+    });
+    this.handleRealtimeUpdates();
+  }
+
+  toggleSidebar() {
+    this.headerToggle = !this.headerToggle;
+  }
+
+  async loadData() {
+    this.dataDownloaded = false;
     if (this.boardId) {
-      const board = await this.dataService.getBoardInfo(this.boardId);
-      this.boardInfo = board.data;
+      this.users = await this.dataService.getUsersFromBoard(this.boardId);
+      this.boardInfo = await this.dataService.getBoardInfo(this.boardId);
       this.lists = await this.dataService.getBoardLists(this.boardId);
       for (let list of this.lists) {
         this.listCards[list.id] = await this.dataService.getListCards(list.id);
       }
       this.dataDownloaded = true;
     }
-    if (this.boards.length === 0) {
-      this.startBoard();
-    }
-    this.handleRealtimeUpdates();
-    this.dataDownloaded = true;
-  }
-
-  async changeBoard(boardId: string) {
-    this.boardId = boardId;
-    const board = await this.dataService.getBoardInfo(boardId);
-    this.boardInfo = board.data;
-    this.lists = await this.dataService.getBoardLists(boardId);
-    for (let list of this.lists) {
-      this.listCards[list.id] = await this.dataService.getListCards(list.id);
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('changes in main');
   }
 
   async startBoard() {
-    console.log('add');
-    console.log(this.boards);
     await this.dataService.startBoard();
-    console.log(this.boards);
-    let boardsLength = this.boards.length - 1;
-
-    if (boardsLength > 0) {
-      const newBoard = this.boards[boardsLength];
-      // this.router.navigateByUrl(`/groups/${newBoard.boards.id}`)
-    }
   }
 
   signOut() {
     this.auth.logout();
   }
 
+  changeSearchQuery(newValue: string) {
+    this.searchQuery = newValue;
+  }
+
+  changeFilterPriority(priorityId: number) {
+    this.priorityId = priorityId;
+  }
+
   // BOARD logic
-  async saveBoardTitle() {
-    await this.dataService.updateBoard(this.boardInfo);
-    this.titleChanged = false;
+
+  async updateBoardTitle(board: boards) {
+    await this.dataService.updateBoard(board);
   }
 
   async deleteBoard(boardId: number) {
@@ -108,27 +109,16 @@ export class MainPageComponent implements OnInit, OnChanges {
   }
 
   // LISTS logic
-  async addList() {
-    await this.dataService.addBoardList(this.boardId!, this.lists.length);
+  async addList(length: number) {
+    await this.dataService.addBoardList(
+      this.boardId!,
+      this.lists.length,
+      length
+    );
   }
 
-  editingTitle(list: any, edit = false) {
-    this.editTitle[list.id] = edit;
-  }
-
-  async updateListTitle(list: any) {
-    await this.dataService.updateBoardList(list);
-    this.editingTitle(list, false);
-  }
-
-  async deleteBoardList(list: any) {
+  async deleteBoardList(list: ListsModel) {
     await this.dataService.deleteBoardList(list);
-  }
-
-  // Invites
-  async addUser() {
-    await this.dataService.addUserToBoard(this.boardId!, this.addUserEmail);
-    this.addUserEmail = '';
   }
 
   dataCheck() {
@@ -154,21 +144,24 @@ export class MainPageComponent implements OnInit, OnChanges {
             }
             newArr.push(card);
           }
-          this.listCards[record.list_id] = newArr;
+          this.listCards[record] = newArr;
         } else if (event === 'DELETE') {
-          this.listCards[record.list_id] = this.listCards[
-            record.list_id
-          ].filter((card: any) => card.id !== record.id);
+          for (let list in this.listCards) {
+            if (this.listCards.hasOwnProperty(list)) {
+              this.listCards[list] = this.listCards[list].filter(
+                (card: card) => card.id !== record.id
+              );
+            }
+          }
         }
       } else if (update.table == 'lists') {
         if (event === 'INSERT') {
           this.lists.push(record);
           this.listCards[record.id] = [];
         } else if (event === 'UPDATE') {
-          this.lists.filter((list: any) => list.id === record.id)[0] = record;
-
+          this.lists.filter((list: ListsModel) => list.id === record.id)[0] =
+            record;
           const newArr = [];
-
           for (let list of this.lists) {
             if (list.id == record.id) {
               list = record;
@@ -177,17 +170,21 @@ export class MainPageComponent implements OnInit, OnChanges {
           }
           this.lists = newArr;
         } else if (event === 'DELETE') {
-          this.lists = this.lists.filter((list: any) => list.id !== record.id);
+          this.lists = this.lists.filter(
+            (list: ListsModel) => list.id !== record.id
+          );
         }
       } else if (update.table == 'boards') {
         if (event === 'INSERT') {
-          console.log(record);
-          console.log(this.boards);
-          let key = this.boards[this.boards.length - 1];
           let newBoard = {
-            key: record,
+            boards: record,
           };
-          // this.boards.push(newBoard)
+          this.boards.push(newBoard);
+        }
+        if (event === 'DELETE') {
+          this.boards = this.boards.filter(
+            (board) => board.boards.id !== record.id
+          );
         }
       }
     });
