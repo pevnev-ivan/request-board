@@ -137,6 +137,9 @@ export class MainPageComponent implements OnInit {
         if (event === 'INSERT') {
           this.listCards[record.list_id].push(record);
         } else if (event === 'UPDATE') {
+          // debugger;
+          console.log(record);
+          console.log(this.listCards);
           const newArr = [];
           for (let card of this.listCards[record.list_id]) {
             if (card.id == record.id) {
@@ -144,7 +147,7 @@ export class MainPageComponent implements OnInit {
             }
             newArr.push(card);
           }
-          this.listCards[record] = newArr;
+          this.listCards[record.list_id] = newArr;
         } else if (event === 'DELETE') {
           for (let list in this.listCards) {
             if (this.listCards.hasOwnProperty(list)) {
